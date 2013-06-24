@@ -1,0 +1,58 @@
+Program:	tlsa_rdata: Generate DNS TLSA record rdata
+Version:	0.1
+Author:		Shumon Huque <shuque@upenn.edu>
+
+tlsa_rdata: A program to generate DNS TLSA resource record rdata
+from a file containing an X.509 certificate and given command
+line parameters (usage, selector, matching-type).
+
+Pre-requisites:
+
+	Python 2.x
+	M2Crypto module: a python interface to OpenSSL
+
+Installation:
+
+    * System wide (typically /usr/bin or /usr/local/bin), as root:
+
+        python setup.py install
+
+    * In your home directory ($HOME/bin):
+
+        python setup.py install --home=$HOME
+
+    * Or just copy the "tlsa_rdata" file to wherever you want to put it.
+
+
+Example runs:
+
+    // Generate TLSA rdata from "server.crt" with parameters 3 0 1:
+
+    $ tlsa_rdata server.crt 3 0 1
+    3 0 1 7ef4bd014e9a4f302fc1ee74fb2d29718c5b0f4cb23b25b267a1d92f0410890b
+
+    // If this certificate is to be used for the HTTPS server at
+    // www.example.com, we just need to install the following DNS
+    // record (into a signed DNS zone):
+
+    _443._tcp.www.example.com. IN TLSA 3 0 1 7ef4bd014e9a4f302fc1ee74fb2d29718c5b0f4cb23b25b267a1d92f0410890b
+
+
+# Copyright (C) 2013, Shumon Huque
+#
+# tls_rdata is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful, 
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with pydig; see the file COPYING.  If not, write to the Free
+# Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+# MA 02110-1301, USA.
+#
+# Author: Shumon Huque <shuque -@- upenn.edu>
