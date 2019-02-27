@@ -1,11 +1,11 @@
 from distutils.core import setup
 
 setup(name='tlsa_rdata',
-      version='0.1',
+      version='0.2',
       scripts=['tlsa_rdata'],
       description='Generate DNS TLSA record rdata',
       author='Shumon Huque',
-      author_email='shuque@upenn.edu',
+      author_email='shuque@gmail.com',
       url='http://github.com/shuque/tls_rdata',
 
       long_description = \

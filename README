@@ -1,6 +1,6 @@
 Program:	tlsa_rdata: Generate DNS TLSA record rdata
-Version:	0.1
-Author:		Shumon Huque <shuque@upenn.edu>
+Version:	0.2
+Author:		Shumon Huque <shuque@gmail.com>
 
 tlsa_rdata: A program to generate DNS TLSA resource record rdata
 from a file containing an X.509 certificate and given command
@@ -8,7 +8,7 @@ line parameters (usage, selector, matching-type).
 
 Pre-requisites:
 
-	Python 2.x
+	Python 3.x
 	M2Crypto module: a python interface to OpenSSL
 
 Installation:
@@ -55,4 +55,4 @@ Example runs:
 # Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301, USA.
 #
-# Author: Shumon Huque <shuque -@- upenn.edu>
+# Author: Shumon Huque <shuque -@- gmail.com>

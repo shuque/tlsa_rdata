@@ -1,25 +1,29 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
-#
-# Generate DNS rdata for a TLSA resource record from given parameters.
-# 
-# Usage: gen_tlsa_rdata <certfile> <usage> <selector> <matchingtype>
-#
-# See RFC 6698 for details
-# 
-#        usage: 0, 1, 2, or 3
-#        selector: 0 (full cert), or 1 (only pubkey)
-#        matchingtype: 0 (full selector), 1 (sha256 hash), 2 (sha512 hash)
-# 
-# Author: Shumon Huque <shuque@upenn.edu>
-#
+Generate DNS rdata for a TLSA resource record from given parameters.
+
+Usage: gen_tlsa_rdata <certfile> <usage> <selector> <matchingtype>
+
+See RFC 6698 for details
+
+       usage: 0, 1, 2, or 3
+       selector: 0 (full cert), or 1 (only pubkey)
+       matchingtype: 0 (full), 1 (sha256 hash), 2 (sha512 hash)
+
+Author: Shumon Huque <shuque@gmail.com>
 """
 
-import sys, getopt, hashlib, M2Crypto
+import sys
+import hashlib
+import M2Crypto
 
 
-def usage():
+def usage(msg=None):
+    """Print Usage string"""
+    if msg:
+        print('ERROR: {}'.format(msg))
+
     print("""\
 
 Usage: tlsa_rdata <certfile> <usage> <selector> <matchingtype>
@@ -28,10 +32,9 @@ Where,
        certfile: a file containing an X.509 certificate typically in PEM form
        usage: TLSA usage field: 0, 1, 2, or 3
        selector: TLSA selector field: 0 (full cert), or 1 (only pubkey)
-       matchingtype: 0 (full selector), 1 (sha256 hash), 2 (sha512 hash)      
-
+       matchingtype: 0 (full), 1 (sha256 hash), 2 (sha512 hash)
 """)
-    return
+    sys.exit(1)
 
 
 def hexdump(inputstring, separator=''):
@@ -49,7 +52,7 @@ def compute_hash(func, string):
 
 def certfile_to_certobj(filename):
     """convert cert file to M2Crypto X509 object"""
-    return M2Crypto.X509.load_cert_string(open(filename).read())
+    return M2Crypto.X509.load_cert(filename)
 
 
 def get_certdata(certobj, sel):
@@ -78,33 +81,21 @@ def get_hexdata(certdata, matchtype):
 
 if __name__ == '__main__':
 
+    if len(sys.argv) != 5:
+        usage('Not enough arguments supplied.')
+
+    certfile, cusage, sel, matchtype = sys.argv[1:5]
+
     try:
-        certfile, usage, sel, matchtype = sys.argv[1:]
-        usage = int(usage)
+        cusage = int(cusage)
         sel = int(sel)
         matchtype = int(matchtype)
     except (ValueError, IndexError, KeyError) as e:
-        usage()
+        usage(e)
         sys.exit(1)
 
     certobj = certfile_to_certobj(certfile)
     certdata = get_certdata(certobj, sel)
     hexdata = get_hexdata(certdata, matchtype)
 
-    print(">>> Certificate Information:")
-    print("Serial : %x" % certobj.get_serial_number())
-    print("Issuer : %s" % certobj.get_issuer().as_text())
-    print("Subject: %s" % certobj.get_subject().as_text())
-    try:
-        san = certobj.get_ext('subjectAltName')
-        print("Subject Alternative Name(s): %s" % san.get_value())
-    except LookupError:
-        pass
-
-    sig_start = certobj.get_not_before().get_datetime()
-    sig_end   = certobj.get_not_after().get_datetime()
-    print("Certificate Inception:  %s %s<br>" % (sig_start, sig_start.tzname()))
-    print("Certificate Expiration: %s %s<br>" % (sig_end, sig_end.tzname()))
-
-    print("\nGenerated TLSA Record:")
-    print("%d %d %d %s" % (usage, sel, matchtype, hexdata))
+    print("{} {} {} {}".format(cusage, sel, matchtype, hexdata))
