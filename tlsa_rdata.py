@@ -1,16 +1,8 @@
 #!/usr/bin/env python3
 
 """
-Generate DNS rdata for a TLSA resource record from given parameters.
-
-Usage: tlsa_rdata.py <certfile> <usage> <selector> <matchingtype>
-
-See RFC 6698 for details
-
-       usage: 0, 1, 2, or 3
-       selector: 0 (full cert), or 1 (only pubkey)
-       matchingtype: 0 (full), 1 (sha256 hash), 2 (sha512 hash)
-
+Generate DNS TLSA record data from a given X.509 certificate and
+parameters.
 Author: Shumon Huque <shuque@gmail.com>
 """
 
@@ -20,23 +12,28 @@ import M2Crypto
 
 
 __version__ = "0.3.0"
-
+__description__ = f"""\
+Version {__version__}
+Generate DNS TLSA record data from X.509 certificate and parameters."""
 
 def process_arguments():
     """Process command line arguments"""
 
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=__description__)
     parser.add_argument("-v", "--verbose", action="count", default=0,
                         help="increase output verbosity")
-    parser.add_argument("--version", action='version',
-                        version='%(prog)s {version}'.format(version=__version__))
     parser.add_argument("filename",
                         help="X.509 certificate file in PEM format")
     parser.add_argument("usage", type=int,
+                        choices=[0, 1, 2, 3],
                         help="TLSA usage field (0, 1, 2, or 3)")
     parser.add_argument("selector", type=int,
+                        choices=[0, 1],
                         help="TLSA selector: 0 (full cert), 1 (publickey)")
-    parser.add_argument("matchingtype", type=int,
+    parser.add_argument("matchtype", metavar="matchingtype", type=int,
+                        choices=[0, 1, 2],
                         help="TLSA matching type: 0 (full), 1 (sha256), 2 (sha512)")
     return parser.parse_args()
 
@@ -80,7 +77,7 @@ def get_hexdata(certfile, selector, matchtype):
     elif matchtype == 2:
         hexdata = compute_hash(hashlib.sha512, certdata)
     else:
-        raise ValueError("matchtype %d not recognized" % matchtype)
+        raise ValueError("matching type %d not recognized" % matchtype)
     return hexdata
 
 
@@ -97,4 +94,4 @@ if __name__ == '__main__':
     print(get_rdata(args.filename,
                     args.usage,
                     args.selector,
-                    args.matchingtype))
+                    args.matchtype))
