@@ -1,5 +1,5 @@
 Program:	tlsa_rdata: Generate DNS TLSA record rdata
-Version:	0.2
+Version:	0.3.0
 Author:		Shumon Huque <shuque@gmail.com>
 
 tlsa_rdata: A program to generate DNS TLSA resource record rdata

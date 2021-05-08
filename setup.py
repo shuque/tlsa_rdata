@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(name='tlsa_rdata',
-      version='0.2',
+      version='0.3.0',
       scripts=['tlsa_rdata'],
       description='Generate DNS TLSA record rdata',
       author='Shumon Huque',
